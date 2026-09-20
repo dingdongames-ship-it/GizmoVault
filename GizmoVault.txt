@@ -1,0 +1,2153 @@
+============================================================
+PROJECT NAME
+============================================================
+
+GizmoVault
+
+TAGLINE:
+"Discover. Compare. Shop."
+
+PROJECT TYPE:
+Production-grade AI-powered Ecommerce Platform with
+WhatsApp/Business-content ingestion and automated product
+catalog generation.
+
+PRIMARY MARKET:
+India initially, with architecture prepared for international
+sales.
+
+PRIMARY PRODUCT CATEGORIES:
+1. Electronic Gadgets
+2. Imported Watches
+
+FUTURE CATEGORIES:
+3. Mobile Accessories
+4. Smart Devices
+5. Audio Products
+6. Wearables
+7. Computer Accessories
+8. Lifestyle Products
+9. Other Imported Products
+
+============================================================
+CORE PRODUCT VISION
+============================================================
+
+Build a complete ecommerce ecosystem capable of receiving
+authorized product information from supported WhatsApp
+Business/Meta sources and transforming that information into
+structured ecommerce products.
+
+The system should be able to process authorized incoming
+content containing:
+
+- Product images
+- Product videos
+- Product title
+- Product description
+- Product specifications
+- Product quality
+- Product condition
+- Product pricing
+- Discount pricing
+- Product category
+- Brand
+- Model
+- SKU
+- Availability
+- Stock information
+- Warranty information
+- Seller-provided information
+- Additional product notes
+
+The system must intelligently extract, normalize, classify,
+validate and organize the information.
+
+The final result should be a beautiful ecommerce catalog where
+products are automatically placed into the correct category.
+
+Example:
+
+Incoming authorized source content:
+
+"Original imported smartwatch
+AMOLED display
+Bluetooth calling
+Heart-rate monitoring
+7-day battery
+Price ₹2,999
+Discount ₹2,499"
+
+The system should transform this into:
+
+Category:
+Imported Watches
+
+Product:
+Imported Smartwatch AMOLED Bluetooth Calling
+
+Price:
+₹2,499
+
+Original Price:
+₹2,999
+
+Discount:
+₹500
+
+Images:
+Automatically attached
+
+Video:
+Automatically attached if available
+
+Specifications:
+Structured specification fields
+
+Description:
+Clean ecommerce-ready description
+
+Tags:
+smartwatch, bluetooth, AMOLED, imported,
+wearable, fitness
+
+============================================================
+CRITICAL WHATSAPP COMPLIANCE REQUIREMENT
+============================================================
+
+The system MUST use only authorized and supported WhatsApp/
+Meta APIs, WhatsApp Business Platform functionality,
+webhooks, catalog/business integrations, or other officially
+permitted data sources.
+
+DO NOT:
+
+- Scrape private WhatsApp groups.
+- Bypass WhatsApp authentication.
+- Extract content from private conversations without
+  authorization.
+- Use unauthorized WhatsApp Web automation.
+- Steal media from private channels.
+- Circumvent WhatsApp rate limits.
+- Circumvent Meta API restrictions.
+- Store personal WhatsApp information unnecessarily.
+
+The architecture must support legitimate sources such as:
+
+- WhatsApp Business Platform
+- Authorized business conversations
+- Authorized business media
+- Authorized catalog/business data
+- Officially supported webhook events
+- Other authorized Meta integrations
+
+If a requested WhatsApp source cannot legally or technically
+be accessed through an official API, DO NOT invent an API.
+
+Instead:
+
+1. Clearly identify the limitation.
+2. Implement an adapter/interface for future supported access.
+3. Provide an alternative authorized ingestion mechanism.
+4. Continue development using mock/test data.
+
+============================================================
+IMPORTANT DEVELOPMENT RULE
+============================================================
+
+DO NOT attempt to build the entire application in one step.
+
+Build the application in clearly separated phases.
+
+After each phase:
+
+1. Compile/build the project.
+2. Run automated tests.
+3. Run static analysis.
+4. Check database integrity.
+5. Check API contracts.
+6. Check UI navigation.
+7. Check authentication.
+8. Check error handling.
+9. Check responsive behavior.
+10. Fix discovered problems.
+11. Re-run tests.
+12. Only proceed to the next phase after the phase
+    acceptance criteria are satisfied.
+
+Never hide errors.
+
+Never silently ignore failed tests.
+
+Never fabricate unavailable API capabilities.
+
+Never replace production functionality with fake
+implementations without clearly marking them as mock/stub
+implementations.
+
+============================================================
+PHASE 0 — PROJECT DISCOVERY
+============================================================
+
+Before writing application code:
+
+Analyze the entire project requirements.
+
+Create:
+
+/docs/PROJECT_REQUIREMENTS.md
+/docs/ARCHITECTURE.md
+/docs/DATABASE_DESIGN.md
+/docs/API_SPECIFICATION.md
+/docs/WHATSAPP_INTEGRATION.md
+/docs/SECURITY_MODEL.md
+/docs/TESTING_STRATEGY.md
+/docs/DEPLOYMENT_PLAN.md
+/docs/PHASE_STATUS.md
+
+Determine:
+
+- Recommended technology stack
+- Frontend architecture
+- Backend architecture
+- Database
+- Authentication
+- Media storage
+- Image processing
+- Video processing
+- Search
+- Payment gateway
+- Notification system
+- Admin system
+- WhatsApp integration architecture
+- AI extraction architecture
+- Logging
+- Monitoring
+- Deployment architecture
+
+Choose technologies that are:
+
+- Stable
+- Production-ready
+- Well documented
+- Secure
+- Maintainable
+- Scalable
+- Cost-conscious
+
+Do not choose technologies simply because they are trendy.
+
+============================================================
+PHASE 1 — BRAND AND DESIGN SYSTEM
+============================================================
+
+Create the GizmoVault visual identity.
+
+Brand personality:
+
+- Premium
+- Modern
+- Technology-focused
+- Trustworthy
+- Fast
+- Clean
+- International
+- Mobile-first
+
+Primary focus:
+
+Electronic gadgets + imported watches.
+
+Design language:
+
+- Modern ecommerce UI
+- Large product imagery
+- Rounded cards
+- Clean typography
+- Premium spacing
+- Subtle animations
+- Glass/soft visual effects where appropriate
+- Clear pricing hierarchy
+- Discount badges
+- Product availability indicators
+- Strong CTA buttons
+- Bottom navigation on mobile
+- Responsive desktop layout
+
+Create:
+
+- Logo
+- App icon
+- Color system
+- Typography system
+- Button system
+- Card system
+- Form system
+- Modal system
+- Navigation system
+- Empty states
+- Loading states
+- Error states
+- Skeleton loaders
+- Toast notifications
+
+Avoid visual clutter.
+
+The interface must look like a modern premium ecommerce
+application rather than an old marketplace.
+
+============================================================
+PHASE 2 — USER EXPERIENCE ARCHITECTURE
+============================================================
+
+Create these major application sections.
+
+CUSTOMER APP:
+
+1. Splash Screen
+2. Onboarding
+3. Login
+4. Registration
+5. OTP Verification
+6. Home
+7. Categories
+8. Product Search
+9. Search Results
+10. Filters
+11. Product Details
+12. Product Media Gallery
+13. Product Specifications
+14. Related Products
+15. Wishlist
+16. Cart
+17. Address Management
+18. Coupons
+19. Checkout
+20. Payment
+21. Order Confirmation
+22. Orders
+23. Order Details
+24. Order Tracking
+25. Profile
+26. Notifications
+27. Help/Support
+28. Privacy
+29. Terms
+30. Refund Policy
+
+ADMIN:
+
+1. Dashboard
+2. Product Management
+3. Product Approval Queue
+4. WhatsApp Sources
+5. Ingestion Jobs
+6. Imported Products
+7. Categories
+8. Inventory
+9. Orders
+10. Customers
+11. Coupons
+12. Payments
+13. Shipping
+14. Media Library
+15. Analytics
+16. Settings
+17. Audit Logs
+18. System Health
+
+============================================================
+PHASE 3 — DATABASE ARCHITECTURE
+============================================================
+
+Design a normalized production database.
+
+Core entities:
+
+User
+Address
+Product
+ProductVariant
+Category
+Brand
+ProductImage
+ProductVideo
+ProductSpecification
+Inventory
+Price
+Discount
+Coupon
+Cart
+CartItem
+Wishlist
+Order
+OrderItem
+Payment
+PaymentAttempt
+Shipment
+ShipmentTracking
+Notification
+WhatsAppSource
+WhatsAppMessage
+WhatsAppMedia
+IngestionJob
+ExtractedProduct
+ProductApproval
+AuditLog
+AdminUser
+AdminRole
+WebhookEvent
+
+Each table must contain:
+
+- Unique ID
+- Created timestamp
+- Updated timestamp
+- Appropriate indexes
+- Foreign keys
+- Status fields where required
+- Soft deletion where appropriate
+
+Implement database migrations.
+
+Never store duplicate products unnecessarily.
+
+============================================================
+PHASE 4 — PRODUCT DATA MODEL
+============================================================
+
+Create a flexible product schema.
+
+Every product should support:
+
+Basic:
+
+- Product ID
+- SKU
+- Title
+- Short description
+- Full description
+- Brand
+- Model
+- Category
+- Subcategory
+- Tags
+
+Pricing:
+
+- Original price
+- Selling price
+- Discount
+- Discount percentage
+- Currency
+
+Inventory:
+
+- Stock quantity
+- Stock status
+- Low-stock threshold
+- Availability
+
+Media:
+
+- Primary image
+- Additional images
+- Product video
+- Thumbnail
+- Optimized versions
+
+Specifications:
+
+Dynamic key/value specification system.
+
+Example:
+
+Display:
+1.43 AMOLED
+
+Bluetooth:
+5.3
+
+Battery:
+7 Days
+
+Water Resistance:
+IP68
+
+Material:
+Stainless Steel
+
+Warranty:
+1 Year
+
+Shipping:
+
+- Weight
+- Dimensions
+- Shipping class
+
+Trust:
+
+- Warranty
+- Return eligibility
+- Authenticity information
+- Seller information
+
+============================================================
+PHASE 5 — WHATSAPP INGESTION ENGINE
+============================================================
+
+Create a modular WhatsApp ingestion architecture.
+
+Architecture:
+
+WhatsApp/Meta API
+        ↓
+Webhook
+        ↓
+Message Receiver
+        ↓
+Media Resolver
+        ↓
+Content Processor
+        ↓
+Product Extraction Engine
+        ↓
+Normalization Engine
+        ↓
+Category Classification
+        ↓
+Duplicate Detection
+        ↓
+Validation
+        ↓
+Approval Queue
+        ↓
+Ecommerce Catalog
+
+The ingestion system must support:
+
+TEXT
+IMAGE
+VIDEO
+DOCUMENT where legally/technically supported
+CAPTION
+PRODUCT INFORMATION
+PRICE INFORMATION
+
+Create:
+
+WhatsAppConnector interface
+
+Example conceptual methods:
+
+connect()
+validateCredentials()
+receiveWebhook()
+processMessage()
+retrieveAuthorizedMedia()
+extractContent()
+acknowledgeMessage()
+handleError()
+
+Do not hard-code the entire system directly to WhatsApp.
+
+Use an adapter architecture so additional sources can be
+added later.
+
+============================================================
+PHASE 6 — AI PRODUCT EXTRACTION ENGINE
+============================================================
+
+Create an AI-assisted extraction layer.
+
+Input:
+
+Raw authorized source content.
+
+Output:
+
+Structured product object.
+
+Example:
+
+{
+  title,
+  category,
+  subcategory,
+  brand,
+  model,
+  description,
+  specifications,
+  quality,
+  originalPrice,
+  sellingPrice,
+  discount,
+  currency,
+  stock,
+  warranty,
+  tags,
+  images,
+  videos
+}
+
+The extraction engine must:
+
+- Identify product title
+- Identify prices
+- Identify discounts
+- Identify currency
+- Identify specifications
+- Identify brand
+- Identify model
+- Identify product type
+- Generate clean descriptions
+- Extract keywords
+- Detect category
+- Detect subcategory
+- Detect duplicate products
+- Identify missing information
+
+Do not invent factual specifications.
+
+If information is missing:
+
+Set:
+
+unknown
+
+or
+
+needs_review
+
+rather than hallucinating information.
+
+============================================================
+PHASE 7 — SMART CATEGORY ENGINE
+============================================================
+
+Create automatic category classification.
+
+Example:
+
+"Chronograph Stainless Steel Imported Watch"
+
+→ Watches
+→ Imported Watches
+→ Analog/Chronograph
+
+"Wireless ANC Bluetooth Headphones"
+
+→ Electronics
+→ Audio
+→ Headphones
+
+"Smart AMOLED Fitness Watch"
+
+→ Watches
+→ Smart Watches
+
+Create category confidence scoring internally.
+
+Example:
+
+category:
+Imported Watches
+
+confidence:
+0.96
+
+If confidence is below configured threshold:
+
+Send product to:
+
+ADMIN REVIEW QUEUE
+
+Do not automatically publish uncertain products.
+
+============================================================
+PHASE 8 — PRODUCT DEDUPLICATION
+============================================================
+
+Prevent duplicate products.
+
+Compare:
+
+- SKU
+- Brand
+- Model
+- Product title
+- Image similarity where practical
+- Source reference
+- Product fingerprint
+
+If duplicate:
+
+Update existing product where appropriate.
+
+Do not create unnecessary duplicates.
+
+Maintain source history.
+
+============================================================
+PHASE 9 — ADMIN APPROVAL SYSTEM
+============================================================
+
+Imported products must have configurable workflow:
+
+NEW
+↓
+PROCESSING
+↓
+EXTRACTED
+↓
+VALIDATION
+↓
+NEEDS_REVIEW
+↓
+APPROVED
+↓
+PUBLISHED
+
+Admin can:
+
+- Edit title
+- Edit description
+- Edit price
+- Change category
+- Replace images
+- Remove images
+- Add images
+- Add specifications
+- Change stock
+- Add discount
+- Approve
+- Reject
+- Archive
+
+Provide bulk operations.
+
+============================================================
+PHASE 10 — MEDIA PROCESSING
+============================================================
+
+Build a media pipeline.
+
+For images:
+
+- Validate file
+- Detect type
+- Compress
+- Resize
+- Generate thumbnails
+- Generate WebP/modern format where appropriate
+- Preserve quality
+- Store CDN-ready version
+
+For videos:
+
+- Validate format
+- Generate thumbnail
+- Compress
+- Create streaming-friendly version
+- Store metadata
+- Optimize loading
+
+Never expose private source URLs directly.
+
+Use secure media URLs.
+
+============================================================
+PHASE 11 — HOME PAGE
+============================================================
+
+Create premium ecommerce home screen.
+
+Sections:
+
+Header
+Search
+Categories
+Featured Products
+Trending Products
+New Arrivals
+Imported Watches
+Electronic Gadgets
+Special Offers
+Flash Deals
+Recommended Products
+Recently Viewed
+Footer
+
+Hero section:
+
+"Premium Gadgets & Imported Watches"
+
+CTA:
+
+"Shop Now"
+
+============================================================
+PHASE 12 — CATEGORY EXPERIENCE
+============================================================
+
+Create beautiful category browsing.
+
+Example:
+
+ELECTRONICS
+
+- Audio
+- Headphones
+- Earbuds
+- Smart Devices
+- Mobile Accessories
+- Computer Accessories
+- Gaming Accessories
+- Wearables
+
+IMPORTED WATCHES
+
+- Smart Watches
+- Chronograph
+- Analog
+- Digital
+- Automatic
+- Luxury Inspired
+- Sports Watches
+- Couple Watches
+
+Allow admin to add categories dynamically.
+
+============================================================
+PHASE 13 — PRODUCT DETAILS
+============================================================
+
+Product page must contain:
+
+Image/video gallery
+
+Product title
+
+Brand
+
+Rating
+
+Price
+
+Original price
+
+Discount
+
+Stock status
+
+Short description
+
+Full description
+
+Specifications
+
+Warranty
+
+Shipping information
+
+Return information
+
+Quantity selector
+
+ADD TO CART
+
+BUY NOW
+
+WISHLIST
+
+SHARE
+
+RELATED PRODUCTS
+
+RECOMMENDED PRODUCTS
+
+If video exists:
+
+Display product video prominently.
+
+If video doesn't exist:
+
+Do not display an empty video component.
+
+============================================================
+PHASE 14 — CART
+============================================================
+
+Cart must support:
+
+Single product.
+
+Multiple products.
+
+Quantity adjustment.
+
+Remove item.
+
+Save for later.
+
+Coupon application.
+
+Subtotal.
+
+Discount.
+
+Shipping.
+
+Tax.
+
+Grand total.
+
+Stock validation.
+
+Price validation.
+
+Proceed to checkout.
+
+Before checkout:
+
+Revalidate:
+
+- Product availability
+- Price
+- Stock
+- Coupon
+- Shipping availability
+
+Never rely only on client-side calculations.
+
+All final calculations must be verified server-side.
+
+============================================================
+PHASE 15 — COUPON SYSTEM
+============================================================
+
+Admin can create:
+
+Percentage discount.
+
+Fixed amount discount.
+
+Minimum order coupon.
+
+Maximum discount.
+
+Category-specific coupon.
+
+Product-specific coupon.
+
+First-order coupon.
+
+Expiry date.
+
+Usage limit.
+
+Per-user limit.
+
+Coupon status.
+
+Checkout must clearly show:
+
+Subtotal
+Discount
+Coupon
+Shipping
+Tax
+Final Total
+
+============================================================
+PHASE 16 — ADDRESS AND DELIVERY
+============================================================
+
+Create address system.
+
+Fields:
+
+Full Name
+Phone
+Address Line 1
+Address Line 2
+City
+State
+Postal Code
+Country
+
+Allow:
+
+Add address
+Edit address
+Delete address
+Set default address
+
+Prepare architecture for:
+
+India
+International addresses
+
+Shipping calculation must be configurable.
+
+============================================================
+PHASE 17 — CHECKOUT
+============================================================
+
+Checkout must be extremely simple.
+
+STEP 1:
+Cart Review
+
+STEP 2:
+Delivery Address
+
+STEP 3:
+Shipping Method
+
+STEP 4:
+Coupon
+
+STEP 5:
+Payment Method
+
+STEP 6:
+Order Confirmation
+
+Display supported payment methods based on configured
+payment provider and country.
+
+Do not hard-code unavailable payment methods.
+
+For India architecture should support configurable options
+such as:
+
+- UPI
+- Cards
+- Net Banking
+- Wallets
+- Other gateway-supported methods
+
+For international markets support configurable:
+
+- Cards
+- Wallets
+- Other gateway-supported methods
+
+Use a PCI-compliant payment provider.
+
+Never store raw card numbers or CVV.
+
+============================================================
+PHASE 18 — PAYMENT ARCHITECTURE
+============================================================
+
+Create payment abstraction.
+
+PaymentProvider interface.
+
+Methods:
+
+createPayment()
+verifyPayment()
+capturePayment()
+refundPayment()
+handleWebhook()
+getPaymentStatus()
+
+Support gateway configuration through environment variables.
+
+Payment states:
+
+INITIATED
+PENDING
+AUTHORIZED
+PAID
+FAILED
+CANCELLED
+REFUNDED
+PARTIALLY_REFUNDED
+
+Never mark an order as paid only because the frontend says
+payment succeeded.
+
+Payment confirmation must be verified server-side.
+
+============================================================
+PHASE 19 — ORDER MANAGEMENT
+============================================================
+
+Order lifecycle:
+
+CART
+↓
+CHECKOUT
+↓
+PAYMENT_PENDING
+↓
+PAID
+↓
+PROCESSING
+↓
+PACKED
+↓
+SHIPPED
+↓
+OUT_FOR_DELIVERY
+↓
+DELIVERED
+
+Alternative states:
+
+CANCELLED
+FAILED
+RETURN_REQUESTED
+RETURNED
+REFUNDED
+
+Generate unique order number.
+
+Example:
+
+GV-2026-000001
+
+============================================================
+PHASE 20 — CUSTOMER ACCOUNT
+============================================================
+
+Customer profile:
+
+Name
+Email
+Phone
+Addresses
+Orders
+Wishlist
+Saved items
+Coupons
+Notifications
+Support
+
+Allow account deletion.
+
+Allow data export where applicable.
+
+============================================================
+PHASE 21 — SEARCH ENGINE
+============================================================
+
+Implement powerful ecommerce search.
+
+Search by:
+
+Product name
+Brand
+Model
+Category
+SKU
+Specification
+Keyword
+
+Add:
+
+Autocomplete
+Search suggestions
+Recent searches
+Popular searches
+Typo tolerance where supported
+
+Filters:
+
+Price
+Brand
+Category
+Rating
+Availability
+Discount
+Features
+
+Sorting:
+
+Relevance
+Price low-high
+Price high-low
+Newest
+Popular
+
+============================================================
+PHASE 22 — RECOMMENDATION ENGINE
+============================================================
+
+Create basic recommendation architecture.
+
+Recommend based on:
+
+- Category
+- Similar products
+- Recently viewed
+- Cart contents
+- Purchase history
+- Popular products
+
+Do not over-engineer initial release.
+
+Build the interface so advanced recommendation AI can be
+added later.
+
+============================================================
+PHASE 23 — ADMIN DASHBOARD
+============================================================
+
+Dashboard must show:
+
+Total Sales
+Orders
+Customers
+Products
+Inventory
+Revenue
+Pending Payments
+Pending Orders
+Imported Products
+Products Awaiting Approval
+WhatsApp Ingestion Status
+Failed Jobs
+
+Charts:
+
+Sales
+Orders
+Revenue
+Top Categories
+Top Products
+
+============================================================
+PHASE 24 — INVENTORY
+============================================================
+
+Inventory system must support:
+
+Stock quantity
+Reserved stock
+Available stock
+Low stock
+Out of stock
+
+When order is placed:
+
+Reserve inventory.
+
+When payment succeeds:
+
+Confirm inventory deduction.
+
+When payment fails/cancelled:
+
+Release reservation.
+
+Prevent overselling.
+
+============================================================
+PHASE 25 — NOTIFICATION SYSTEM
+============================================================
+
+Support:
+
+Email
+Push notifications
+SMS where configured
+WhatsApp notifications only through permitted official
+business functionality
+
+Notifications:
+
+Order placed
+Payment successful
+Payment failed
+Order shipped
+Out for delivery
+Delivered
+Refund
+Cancellation
+Promotional notifications where consent/legal basis exists
+
+============================================================
+PHASE 26 — SECURITY
+============================================================
+
+Implement:
+
+HTTPS
+Secure authentication
+Password hashing
+OTP security
+JWT/session security as appropriate
+RBAC
+Admin MFA where supported
+Rate limiting
+CSRF protection where applicable
+Input validation
+Output encoding
+SQL injection protection
+XSS protection
+Secure headers
+Secret management
+Webhook signature verification
+Audit logs
+
+Never expose:
+
+API keys
+Payment secrets
+Database credentials
+WhatsApp secrets
+AI API keys
+
+in frontend code.
+
+============================================================
+PHASE 27 — PRIVACY AND COMPLIANCE
+============================================================
+
+Create:
+
+Privacy Policy page
+Terms & Conditions
+Refund Policy
+Shipping Policy
+Cookie policy where applicable
+Consent mechanisms where applicable
+
+Minimize personal data.
+
+Store only required information.
+
+Provide account deletion workflow.
+
+Provide data retention configuration.
+
+For WhatsApp data:
+
+Only process data for which the business has legitimate
+authorization and permitted API access.
+
+============================================================
+PHASE 28 — ERROR HANDLING
+============================================================
+
+Every external integration must have:
+
+Timeout
+Retry
+Exponential backoff
+Logging
+Failure status
+Dead-letter/retry mechanism where appropriate
+
+Examples:
+
+WhatsApp API unavailable.
+
+Payment provider unavailable.
+
+AI extraction unavailable.
+
+Media download failed.
+
+Database unavailable.
+
+Shipping provider unavailable.
+
+Never crash the complete application because one external
+service fails.
+
+============================================================
+PHASE 29 — BACKGROUND JOB SYSTEM
+============================================================
+
+Long-running tasks must not block HTTP requests.
+
+Use background workers for:
+
+Media processing
+AI extraction
+Product categorization
+Image optimization
+Video processing
+Search indexing
+Notifications
+Webhook processing
+Catalog synchronization
+
+Each job must have:
+
+Job ID
+Status
+Attempt count
+Started time
+Completed time
+Error message
+
+============================================================
+PHASE 30 — OBSERVABILITY
+============================================================
+
+Implement:
+
+Structured logging
+Application metrics
+Error tracking
+Health endpoint
+Readiness endpoint
+Liveness endpoint
+
+Health checks:
+
+Database
+Storage
+WhatsApp integration
+Payment integration
+AI service
+Queue
+
+Create admin system health screen.
+
+============================================================
+PHASE 31 — TESTING
+============================================================
+
+Create:
+
+Unit tests
+Integration tests
+API tests
+Database tests
+Authentication tests
+Payment tests
+Webhook tests
+WhatsApp ingestion tests
+AI extraction tests
+Product classification tests
+Cart tests
+Coupon tests
+Checkout tests
+Order tests
+Inventory tests
+Security tests
+UI tests
+End-to-end tests
+
+Critical test scenarios:
+
+1. Import product with image.
+2. Import product with video.
+3. Import product with image + text.
+4. Extract price.
+5. Extract discount.
+6. Extract category.
+7. Detect missing price.
+8. Detect duplicate product.
+9. Reject low-confidence category.
+10. Approve product.
+11. Publish product.
+12. Add one product to cart.
+13. Add multiple products.
+14. Apply coupon.
+15. Invalid coupon.
+16. Checkout.
+17. Payment success.
+18. Payment failure.
+19. Stock unavailable.
+20. Duplicate payment callback.
+21. Order cancellation.
+22. Refund.
+23. Media processing failure.
+24. WhatsApp API failure.
+25. Database failure.
+
+============================================================
+PHASE 32 — PERFORMANCE
+============================================================
+
+Optimize for:
+
+Fast startup
+Fast catalog loading
+Lazy image loading
+Pagination
+Caching
+Database indexing
+CDN
+API response compression
+Efficient queries
+Background processing
+
+Target:
+
+Product listing should load quickly even with a large catalog.
+
+Never load the entire product database into the client.
+
+============================================================
+PHASE 33 — ADMIN PRODUCT IMPORT SCREEN
+============================================================
+
+Create a dedicated:
+
+"WhatsApp Product Import Center"
+
+Display:
+
+Source
+Message
+Date
+Media
+Detected Product
+Detected Price
+Detected Category
+Confidence
+Status
+
+Actions:
+
+Review
+Edit
+Approve
+Reject
+Retry
+Publish
+
+Include:
+
+Import statistics.
+
+Example:
+
+Products Received: 150
+Successfully Extracted: 137
+Needs Review: 8
+Duplicates: 4
+Failed: 1
+
+============================================================
+PHASE 34 — AUTOMATIC PRODUCT PIPELINE
+============================================================
+
+Create the following automated pipeline:
+
+AUTHORIZED SOURCE
+        ↓
+MESSAGE RECEIVED
+        ↓
+MEDIA RESOLUTION
+        ↓
+TEXT EXTRACTION
+        ↓
+IMAGE/VIDEO ANALYSIS
+        ↓
+PRODUCT INFORMATION EXTRACTION
+        ↓
+PRICE EXTRACTION
+        ↓
+SPECIFICATION EXTRACTION
+        ↓
+CATEGORY CLASSIFICATION
+        ↓
+DUPLICATE DETECTION
+        ↓
+VALIDATION
+        ↓
+CONFIDENCE CHECK
+        ↓
+ADMIN APPROVAL IF REQUIRED
+        ↓
+PRODUCT CREATION
+        ↓
+MEDIA OPTIMIZATION
+        ↓
+SEARCH INDEX
+        ↓
+PUBLISH
+        ↓
+CUSTOMER CAN SHOP
+
+============================================================
+PHASE 35 — PRODUCT QUALITY PROTECTION
+============================================================
+
+Never automatically publish a product when critical
+information is missing.
+
+Critical information:
+
+Product title
+Price
+Product category
+At least one usable image OR permitted product media
+Product availability
+
+If missing:
+
+Status = NEEDS_REVIEW
+
+============================================================
+PHASE 36 — DUPLICATE SOURCE HANDLING
+============================================================
+
+If the same source message is received twice:
+
+Do not duplicate the product.
+
+Use:
+
+source_message_id
+
+or equivalent unique event identifier.
+
+Webhook events must be idempotent.
+
+============================================================
+PHASE 37 — ADMIN SETTINGS
+============================================================
+
+Admin configurable settings:
+
+Store name
+Logo
+Currency
+Tax
+Shipping
+Categories
+Payment gateway
+WhatsApp integration
+AI provider
+Media storage
+Email
+Notifications
+Coupons
+Inventory rules
+Approval threshold
+Product publishing rules
+
+============================================================
+PHASE 38 — ANALYTICS
+============================================================
+
+Track:
+
+Product views
+Searches
+Add-to-cart
+Checkout initiation
+Purchases
+Conversion rate
+Revenue
+Average order value
+Top products
+Top categories
+Coupon usage
+Abandoned carts
+
+WhatsApp ingestion:
+
+Messages processed
+Products extracted
+Products approved
+Products rejected
+Duplicates
+Failures
+
+============================================================
+PHASE 39 — SEED DATA
+============================================================
+
+Create realistic development data.
+
+Categories:
+
+Electronics
+Imported Watches
+
+Products:
+
+At least 20 realistic test products.
+
+Include:
+
+Images using safe placeholder assets.
+
+Prices in INR.
+
+Different discounts.
+
+Different categories.
+
+Different inventory states.
+
+Do not use copyrighted product images without permission.
+
+============================================================
+PHASE 40 — UI POLISH
+============================================================
+
+Perform a complete visual audit.
+
+Check:
+
+Spacing
+Typography
+Buttons
+Cards
+Images
+Loading
+Empty states
+Error states
+Navigation
+Dark/light behavior if implemented
+Mobile responsiveness
+Tablet responsiveness
+Desktop responsiveness
+
+No broken layouts.
+
+No placeholder lorem ipsum in production-facing screens.
+
+No dead buttons.
+
+No non-functional navigation.
+
+============================================================
+PHASE 41 — ACCESSIBILITY
+============================================================
+
+Implement:
+
+Accessible contrast
+Semantic controls
+Keyboard navigation where applicable
+Screen reader labels
+Accessible form validation
+Meaningful error messages
+Touch-friendly controls
+
+============================================================
+PHASE 42 — PRODUCTION CONFIGURATION
+============================================================
+
+Create environment configuration.
+
+Example:
+
+DATABASE_URL
+AUTH_SECRET
+PAYMENT_SECRET
+PAYMENT_WEBHOOK_SECRET
+WHATSAPP_ACCESS_TOKEN
+WHATSAPP_VERIFY_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+MEDIA_STORAGE_KEY
+AI_PROVIDER_KEY
+EMAIL_PROVIDER_KEY
+
+Never commit secrets.
+
+Create:
+
+.env.example
+
+with placeholder names only.
+
+============================================================
+PHASE 43 — DEPLOYMENT
+============================================================
+
+Create production deployment documentation.
+
+Include:
+
+Frontend deployment
+Backend deployment
+Database deployment
+Storage
+CDN
+Worker deployment
+Environment variables
+Domain configuration
+HTTPS
+Webhook configuration
+Payment webhook configuration
+Monitoring
+Backups
+Rollback strategy
+
+============================================================
+PHASE 44 — DISASTER RECOVERY
+============================================================
+
+Implement/document:
+
+Database backups
+Media backup strategy
+Restore procedure
+Application rollback
+Migration rollback strategy
+Webhook replay strategy
+Failed job recovery
+
+============================================================
+PHASE 45 — FINAL SECURITY AUDIT
+============================================================
+
+Before production:
+
+Check:
+
+Secrets
+Authentication
+Authorization
+Admin routes
+API routes
+Webhooks
+Payment callbacks
+File uploads
+Media access
+SQL queries
+User input
+Rate limiting
+CORS
+Headers
+Logs
+PII
+Data retention
+
+Fix all high-risk issues.
+
+============================================================
+PHASE 46 — FINAL END-TO-END TEST
+============================================================
+
+Perform a complete simulated workflow.
+
+TEST:
+
+Authorized WhatsApp source
+        ↓
+Product message
+        ↓
+Product image
+        ↓
+Extraction
+        ↓
+Category
+        ↓
+Approval
+        ↓
+Catalog publication
+        ↓
+Customer opens product
+        ↓
+Adds product
+        ↓
+Adds second product
+        ↓
+Cart
+        ↓
+Coupon
+        ↓
+Address
+        ↓
+Shipping
+        ↓
+Payment
+        ↓
+Order
+        ↓
+Inventory
+        ↓
+Notification
+        ↓
+Admin order dashboard
+
+The complete flow must work without manual database
+intervention.
+
+============================================================
+PHASE 47 — RELEASE CHECKLIST
+============================================================
+
+Before declaring production-ready:
+
+[ ] Application builds successfully
+[ ] Database migrations work
+[ ] Authentication works
+[ ] Admin authentication works
+[ ] Product creation works
+[ ] Product import works
+[ ] Media processing works
+[ ] Categorization works
+[ ] Duplicate detection works
+[ ] Product approval works
+[ ] Search works
+[ ] Cart works
+[ ] Coupons work
+[ ] Address system works
+[ ] Checkout works
+[ ] Payment integration works
+[ ] Payment verification works
+[ ] Orders work
+[ ] Inventory works
+[ ] Notifications work
+[ ] Error handling works
+[ ] Logging works
+[ ] Monitoring works
+[ ] Security checks pass
+[ ] Responsive UI works
+[ ] Accessibility checks pass
+[ ] Privacy pages exist
+[ ] Terms exist
+[ ] Refund policy exists
+[ ] Shipping policy exists
+[ ] Production configuration documented
+[ ] Backup strategy documented
+[ ] Deployment documented
+[ ] No secrets committed
+[ ] No broken links
+[ ] No dead buttons
+[ ] No console errors
+[ ] No critical test failures
+
+============================================================
+ANTIGRAVITY EXECUTION RULES
+============================================================
+
+RULE 1:
+
+DO NOT build all phases simultaneously.
+
+RULE 2:
+
+Complete one major phase at a time.
+
+RULE 3:
+
+After every phase:
+
+BUILD → TEST → DEBUG → VERIFY → DOCUMENT → PROCEED
+
+RULE 4:
+
+If a phase fails:
+
+STOP.
+
+Identify the root cause.
+
+Fix it.
+
+Run the tests again.
+
+Only then continue.
+
+RULE 5:
+
+Never hide warnings or errors.
+
+RULE 6:
+
+Never fabricate API capabilities.
+
+RULE 7:
+
+Never fabricate WhatsApp API access.
+
+RULE 8:
+
+Use official APIs and authorized integrations only.
+
+RULE 9:
+
+Never place secrets inside frontend code.
+
+RULE 10:
+
+Never use mock payment success in production.
+
+RULE 11:
+
+Never mark an order paid based solely on frontend
+confirmation.
+
+RULE 12:
+
+Never publish uncertain AI-extracted product information
+without configurable approval rules.
+
+RULE 13:
+
+Never invent missing product specifications.
+
+RULE 14:
+
+Use real APIs only when credentials/configuration are
+available.
+
+Otherwise create clean provider interfaces and safe mock
+adapters for development.
+
+RULE 15:
+
+Maintain documentation throughout development.
+
+Update:
+
+/docs/PHASE_STATUS.md
+
+after every completed phase.
+
+============================================================
+PHASE COMPLETION FORMAT
+============================================================
+
+After completing every phase, generate:
+
+PHASE:
+STATUS:
+
+Implemented:
+- ...
+
+Tests:
+- ...
+
+Failures:
+- ...
+
+Fixed:
+- ...
+
+Remaining:
+- ...
+
+Files Created:
+- ...
+
+Files Modified:
+- ...
+
+Security Considerations:
+- ...
+
+Performance Considerations:
+- ...
+
+Acceptance Criteria:
+- PASS/FAIL
+
+Next Phase:
+- ...
+
+Do not proceed if Acceptance Criteria = FAIL.
+
+============================================================
+FINAL OBJECTIVE
+============================================================
+
+The final GizmoVault application should feel like a
+professional commercial ecommerce platform.
+
+A customer should be able to:
+
+OPEN APP
+↓
+SEARCH/BROWSE
+↓
+VIEW PRODUCT
+↓
+WATCH PRODUCT VIDEO IF AVAILABLE
+↓
+READ DESCRIPTION
+↓
+VIEW SPECIFICATIONS
+↓
+SELECT QUANTITY
+↓
+ADD TO CART
+↓
+ADD MORE PRODUCTS
+↓
+APPLY COUPON
+↓
+SELECT ADDRESS
+↓
+SELECT SHIPPING
+↓
+SELECT PAYMENT METHOD
+↓
+PAY
+↓
+RECEIVE ORDER CONFIRMATION
+↓
+TRACK ORDER
+
+Meanwhile the administrator should be able to:
+
+CONNECT AUTHORIZED WHATSAPP SOURCE
+↓
+RECEIVE PRODUCT CONTENT
+↓
+EXTRACT PRODUCT DATA
+↓
+EXTRACT MEDIA
+↓
+IDENTIFY PRICE
+↓
+IDENTIFY CATEGORY
+↓
+DETECT DUPLICATES
+↓
+VALIDATE PRODUCT
+↓
+APPROVE
+↓
+PUBLISH
+↓
+MANAGE INVENTORY
+↓
+RECEIVE ORDERS
+↓
+MANAGE FULFILLMENT
+↓
+VIEW ANALYTICS
+
+The final product must be:
+
+FAST
+SECURE
+SCALABLE
+MODERN
+MOBILE-FIRST
+ACCESSIBLE
+PRODUCTION-READY
+MAINTAINABLE
+API-DRIVEN
+AI-ASSISTED
+WHATSAPP-INTEGRATED
+ECOMMERCE-READY
+
+============================================================
+START
+============================================================
+
+Begin with PHASE 0 only.
+
+Do not start Phase 1 until Phase 0 documentation,
+architecture decisions and acceptance criteria are complete.
+
+First inspect the development environment and available
+tools.
+
+Then produce the Phase 0 plan.
+
+After Phase 0 is approved by the automated validation
+checks, proceed sequentially.

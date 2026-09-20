@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="vaultGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121826" />
+      <stop offset="100%" stop-color="#0a0e17" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Rounded Shield / Vault Hexagon -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+  
+  <!-- Ambient Glow Ring -->
+  <circle cx="256" cy="256" r="160" fill="none" stroke="url(#vaultGrad)" stroke-width="3" stroke-dasharray="16 12" opacity="0.35"/>
+  
+  <!-- Vault Outer Rim -->
+  <polygon points="256,76 396,156 396,316 256,396 116,316 116,156" 
+           fill="none" stroke="url(#vaultGrad)" stroke-width="14" stroke-linejoin="round" filter="url(#glow)"/>
+  
+  <!-- Precision Watch Gears & Circuit Lines -->
+  <circle cx="256" cy="236" r="76" fill="#121826" stroke="#00e5ff" stroke-width="6"/>
+  <circle cx="256" cy="236" r="54" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 6"/>
+  
+  <!-- Watch Hands / Compass / Tech Nodes -->
+  <line x1="256" y1="236" x2="256" y2="190" stroke="#00e5ff" stroke-width="6" stroke-linecap="round"/>
+  <line x1="256" y1="236" x2="292" y2="236" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="256" cy="236" r="8" fill="#ffffff"/>
+  
+  <!-- Circuit Nodes around Hexagon -->
+  <circle cx="256" cy="76" r="10" fill="#00e5ff"/>
+  <circle cx="396" cy="156" r="10" fill="#3b82f6"/>
+  <circle cx="396" cy="316" r="10" fill="#f59e0b"/>
+  <circle cx="256" cy="396" r="10" fill="#00e5ff"/>
+  <circle cx="116" cy="316" r="10" fill="#3b82f6"/>
+  <circle cx="116" cy="156" r="10" fill="#f59e0b"/>
+  
+  <!-- Sparkle Accents -->
+  <polygon points="340,110 346,126 362,132 346,138 340,154 334,138 318,132 334,126" fill="#00e5ff" opacity="0.8"/>
+  <polygon points="170,330 174,342 186,346 174,350 170,362 166,350 154,346 166,342" fill="#f59e0b" opacity="0.8"/>
+</svg>

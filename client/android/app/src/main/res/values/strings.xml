@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GizmoVault</string>
+    <string name="title_activity_main">GizmoVault</string>
+    <string name="package_name">com.gizmovault.app</string>
+    <string name="custom_url_scheme">com.gizmovault.app</string>
+</resources>
