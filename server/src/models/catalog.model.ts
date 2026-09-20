@@ -146,7 +146,82 @@ export class CatalogProductRepository {
       WHERE id = ?
     `);
     const result = stmt.run(status, id);
-    return (result as any)?.changes > 0;
+    return ((result as any)?.changes || 0) > 0;
+  }
+
+  public update(id: string, updates: Partial<ShopifyProductDraft>): ShopifyProductDraft | null {
+    const existing = this.findById(id);
+    if (!existing) return null;
+
+    const fields: string[] = [];
+    const params: any[] = [];
+
+    if (updates.title !== undefined) {
+      fields.push('title = ?');
+      params.push(updates.title);
+    }
+    if (updates.description_html !== undefined) {
+      fields.push('description_html = ?');
+      params.push(updates.description_html);
+    }
+    if (updates.category !== undefined) {
+      fields.push('category = ?');
+      params.push(updates.category);
+    }
+    if (updates.price !== undefined) {
+      fields.push('price = ?');
+      params.push(updates.price);
+    }
+    if (updates.currency !== undefined) {
+      fields.push('currency = ?');
+      params.push(updates.currency);
+    }
+    if (updates.status !== undefined) {
+      fields.push('status = ?');
+      params.push(updates.status);
+    }
+    if (updates.media !== undefined) {
+      fields.push('media = ?');
+      params.push(JSON.stringify(updates.media));
+    }
+
+    if (fields.length === 0) {
+      return existing;
+    }
+
+    fields.push('updated_at = CURRENT_TIMESTAMP');
+    params.push(id);
+
+    const query = `UPDATE catalog_products SET ${fields.join(', ')} WHERE id = ?`;
+    this.db.prepare(query).run(...params);
+
+    return this.findById(id);
+  }
+
+  public delete(id: string): boolean {
+    const stmt = this.db.prepare(`DELETE FROM catalog_products WHERE id = ?`);
+    const result = stmt.run(id);
+    return ((result as any)?.changes || 0) > 0;
+  }
+
+  public batchUpdateStatus(ids: string[], status: 'DRAFT' | 'ACTIVE' | 'ARCHIVED'): number {
+    if (!ids || ids.length === 0) return 0;
+    const placeholders = ids.map(() => '?').join(',');
+    const stmt = this.db.prepare(`
+      UPDATE catalog_products
+      SET status = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id IN (${placeholders})
+    `);
+    const result = stmt.run(status, ...ids);
+    return (result as any)?.changes || 0;
+  }
+
+  public batchDelete(ids: string[]): number {
+    if (!ids || ids.length === 0) return 0;
+    const placeholders = ids.map(() => '?').join(',');
+    const stmt = this.db.prepare(`DELETE FROM catalog_products WHERE id IN (${placeholders})`);
+    const result = stmt.run(...ids);
+    return (result as any)?.changes || 0;
   }
 
   private mapRowToProduct(row: Record<string, any>): ShopifyProductDraft {

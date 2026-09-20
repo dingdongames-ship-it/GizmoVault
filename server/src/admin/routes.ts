@@ -5,6 +5,7 @@ import formidable from 'formidable';
 import { AdminApprovalService, WorkflowStatus } from './approval.service.js';
 import { CatalogProductRepository } from '../models/catalog.model.js';
 import { CatalogClassifierService } from './classifier.service.js';
+import { ingestionEventBus } from './ingestion-stream.js';
 
 export function createAdminRoutes(
   approvalService?: AdminApprovalService,
@@ -200,8 +201,14 @@ export function createAdminRoutes(
     }
   });
 
-  // 11. WhatsApp / Media Catalog Ingestion Endpoint (Streaming Multipart)
+  // 11. Real-Time Ingestion Event Stream (Server-Sent Events)
+  router.get('/ingestion-stream', (req: Request, res: Response) => {
+    ingestionEventBus.handleSseConnection(req, res);
+  });
+
+  // 12. WhatsApp / Media Catalog Ingestion Endpoint (Streaming Multipart)
   router.post('/ingest-product', async (req: Request, res: Response) => {
+    const startTime = performance.now();
     try {
       const form = formidable({
         uploadDir: catalogUploadDir,
@@ -250,10 +257,20 @@ export function createAdminRoutes(
 
       // Persist to Shopify-style catalog schema
       const created = catalogRepo.create(draft);
+      const latencyMs = Math.round(performance.now() - startTime);
+
+      // Broadcast real-time event to merchant dashboard
+      ingestionEventBus.broadcast({
+        type: 'INGESTION_COMPLETED',
+        timestamp: new Date().toISOString(),
+        product: created,
+        latencyMs
+      });
 
       res.status(201).json({
         success: true,
-        product: created
+        product: created,
+        latencyMs
       });
     } catch (err: any) {
       console.error('[Ingest Error]:', err);
@@ -261,7 +278,7 @@ export function createAdminRoutes(
     }
   });
 
-  // 12. Catalog Products Query & Filter Endpoint
+  // 13. Catalog Products Query & Filter Endpoint
   router.get('/products', (req: Request, res: Response) => {
     try {
       const { merchant_id, category, status, search, page, limit } = req.query;
@@ -274,6 +291,105 @@ export function createAdminRoutes(
         limit: limit ? Number(limit) : 20
       });
       res.json({ success: true, ...result });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 14. Single Product Details
+  router.get('/products/:id', (req: Request, res: Response) => {
+    try {
+      const id = String(req.params.id);
+      const product = catalogRepo.findById(id);
+      if (!product) {
+        return res.status(404).json({ success: false, error: 'Product not found' });
+      }
+      res.json({ success: true, product });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 15. Single Product Quick Edit & Status Update
+  router.patch('/products/:id', (req: Request, res: Response) => {
+    try {
+      const id = String(req.params.id);
+      const updates = req.body;
+      const updated = catalogRepo.update(id, updates);
+      if (!updated) {
+        return res.status(404).json({ success: false, error: 'Product not found' });
+      }
+
+      // Broadcast update event to all connected dashboard clients
+      ingestionEventBus.broadcast({
+        type: 'CATALOG_UPDATED',
+        timestamp: new Date().toISOString(),
+        product: updated
+      });
+
+      res.json({ success: true, product: updated });
+    } catch (err: any) {
+      res.status(400).json({ success: false, error: err.message });
+    }
+  });
+
+  // 16. Single Product Deletion / Archive
+  router.delete('/products/:id', (req: Request, res: Response) => {
+    try {
+      const id = String(req.params.id);
+      const deleted = catalogRepo.delete(id);
+      if (!deleted) {
+        return res.status(404).json({ success: false, error: 'Product not found' });
+      }
+
+      // Broadcast deletion event to connected dashboards
+      ingestionEventBus.broadcast({
+        type: 'CATALOG_DELETED',
+        timestamp: new Date().toISOString(),
+        productId: id
+      });
+
+      res.json({ success: true, message: 'Product deleted' });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 17. Bulk Operations (Publish, Archive, Delete)
+  router.post('/products/bulk', (req: Request, res: Response) => {
+    try {
+      const { action, ids } = req.body;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ success: false, error: 'Array of product IDs is required' });
+      }
+
+      if (action === 'publish') {
+        const count = catalogRepo.batchUpdateStatus(ids, 'ACTIVE');
+        ingestionEventBus.broadcast({
+          type: 'CATALOG_UPDATED',
+          timestamp: new Date().toISOString(),
+          metadata: { action: 'bulk_publish', ids, count }
+        });
+        return res.json({ success: true, action: 'publish', affected: count });
+      } else if (action === 'archive') {
+        const count = catalogRepo.batchUpdateStatus(ids, 'ARCHIVED');
+        ingestionEventBus.broadcast({
+          type: 'CATALOG_UPDATED',
+          timestamp: new Date().toISOString(),
+          metadata: { action: 'bulk_archive', ids, count }
+        });
+        return res.json({ success: true, action: 'archive', affected: count });
+      } else if (action === 'delete') {
+        const count = catalogRepo.batchDelete(ids);
+        ingestionEventBus.broadcast({
+          type: 'CATALOG_DELETED',
+          timestamp: new Date().toISOString(),
+          metadata: { action: 'bulk_delete', ids, count }
+        });
+        return res.json({ success: true, action: 'delete', affected: count });
+      } else {
+        return res.status(400).json({ success: false, error: 'Invalid action: must be publish, archive, or delete' });
+      }
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }

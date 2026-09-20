@@ -20,8 +20,10 @@ import { Input } from '../../ui/Input';
 import { Modal } from '../../ui/Modal';
 import { useApp } from '../../../context/AppContext';
 import { useToast } from '../../ui/Toast';
+import { MerchantDashboardView } from './MerchantDashboardView';
+import { Radio } from 'lucide-react';
 
-type AdminTab = 'dashboard' | 'approval' | 'whatsapp' | 'inventory' | 'orders' | 'health';
+type AdminTab = 'merchant-live' | 'dashboard' | 'approval' | 'whatsapp' | 'inventory' | 'orders' | 'health';
 
 export const AdminPortalView: React.FC = () => {
   const { 
@@ -34,7 +36,7 @@ export const AdminPortalView: React.FC = () => {
   } = useApp();
   const { showToast } = useToast();
 
-  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [activeTab, setActiveTab] = useState<AdminTab>('merchant-live');
   const [editingItem, setEditingItem] = useState<any | null>(null);
 
   // Simulation state
@@ -71,6 +73,14 @@ export const AdminPortalView: React.FC = () => {
 
         {/* Tab Switcher */}
         <div style={{ display: 'flex', gap: 6, background: 'var(--bg-surface-elevated)', padding: 4, borderRadius: 'var(--radius-md)', overflowX: 'auto' }}>
+          <Button 
+            variant={activeTab === 'merchant-live' ? 'primary' : 'ghost'} 
+            size="sm" 
+            icon={<Radio size={14} style={{ color: activeTab === 'merchant-live' ? '#fff' : 'var(--accent-cyan)' }} />} 
+            onClick={() => setActiveTab('merchant-live')}
+          >
+            Live Ingestion & Catalog
+          </Button>
           <Button 
             variant={activeTab === 'dashboard' ? 'primary' : 'ghost'} 
             size="sm" 
@@ -121,6 +131,11 @@ export const AdminPortalView: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* TAB 0: REAL-TIME INGESTION & CATALOG COMMAND CENTER */}
+      {activeTab === 'merchant-live' && (
+        <MerchantDashboardView />
+      )}
 
       {/* TAB 1: EXECUTIVE DASHBOARD */}
       {activeTab === 'dashboard' && (
