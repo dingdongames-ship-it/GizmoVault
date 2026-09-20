@@ -106,6 +106,10 @@ export const MerchantDashboardView: React.FC = () => {
   }, [fetchProducts]);
 
   // Real-Time SSE Stream Handlers
+  const handleIngestionStarted = useCallback((evt: StreamEvent) => {
+    showToast('📥 Incoming WhatsApp media stream received, running AI classification...', 'info');
+  }, [showToast]);
+
   const handleIngestionCompleted = useCallback((evt: StreamEvent) => {
     if (evt.product) {
       const incoming = evt.product;
@@ -123,6 +127,10 @@ export const MerchantDashboardView: React.FC = () => {
 
       showToast(`⚡ New WhatsApp item ingested: "${incoming.title}" (${evt.latencyMs || 150}ms)`, 'success');
     }
+  }, [showToast]);
+
+  const handleIngestionFailed = useCallback((evt: StreamEvent) => {
+    showToast(`❌ Ingestion failed: ${evt.error || 'Error processing media'}`, 'error');
   }, [showToast]);
 
   const handleCatalogUpdated = useCallback((evt: StreamEvent) => {
@@ -148,7 +156,9 @@ export const MerchantDashboardView: React.FC = () => {
   }, [fetchProducts]);
 
   const { status: sseStatus, reconnect } = useIngestionStream({
+    onIngestionStarted: handleIngestionStarted,
     onIngestionCompleted: handleIngestionCompleted,
+    onIngestionFailed: handleIngestionFailed,
     onCatalogUpdated: handleCatalogUpdated,
     onCatalogDeleted: handleCatalogDeleted
   });

@@ -209,6 +209,16 @@ export function createAdminRoutes(
   // 12. WhatsApp / Media Catalog Ingestion Endpoint (Streaming Multipart)
   router.post('/ingest-product', async (req: Request, res: Response) => {
     const startTime = performance.now();
+    const trackingId = `ingest_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+    // Broadcast ingestion initiated
+    ingestionEventBus.broadcast({
+      type: 'INGESTION_STARTED',
+      timestamp: new Date().toISOString(),
+      trackingId,
+      message: 'Multipart payload stream received; beginning parsing and AI extraction.'
+    });
+
     try {
       const form = formidable({
         uploadDir: catalogUploadDir,
@@ -263,18 +273,26 @@ export function createAdminRoutes(
       ingestionEventBus.broadcast({
         type: 'INGESTION_COMPLETED',
         timestamp: new Date().toISOString(),
+        trackingId,
         product: created,
         latencyMs
       });
 
       res.status(201).json({
         success: true,
+        trackingId,
         product: created,
         latencyMs
       });
     } catch (err: any) {
       console.error('[Ingest Error]:', err);
-      res.status(500).json({ success: false, error: err.message || 'Failed to ingest catalog item' });
+      ingestionEventBus.broadcast({
+        type: 'INGESTION_FAILED',
+        timestamp: new Date().toISOString(),
+        trackingId,
+        error: err.message || 'Failed to ingest catalog item'
+      });
+      res.status(500).json({ success: false, trackingId, error: err.message || 'Failed to ingest catalog item' });
     }
   });
 

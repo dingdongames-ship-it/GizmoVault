@@ -2,15 +2,24 @@ import { EventEmitter } from 'node:events';
 import type { Request, Response } from 'express';
 import type { ShopifyProductDraft } from '../models/catalog.model.js';
 
-export type IngestionEventType = 'CONNECTED' | 'INGESTION_COMPLETED' | 'CATALOG_UPDATED' | 'CATALOG_DELETED' | 'PING';
+export type IngestionEventType = 
+  | 'CONNECTED' 
+  | 'INGESTION_STARTED'
+  | 'INGESTION_COMPLETED' 
+  | 'INGESTION_FAILED'
+  | 'CATALOG_UPDATED' 
+  | 'CATALOG_DELETED' 
+  | 'PING';
 
 export interface IngestionEventPayload {
   type: IngestionEventType;
   timestamp: string;
+  trackingId?: string;
   product?: ShopifyProductDraft;
   productId?: string;
   latencyMs?: number;
   message?: string;
+  error?: string;
   metadata?: Record<string, any>;
 }
 

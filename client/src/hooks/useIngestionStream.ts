@@ -22,17 +22,21 @@ export interface IngestionProduct {
 }
 
 export interface StreamEvent {
-  type: 'CONNECTED' | 'INGESTION_COMPLETED' | 'CATALOG_UPDATED' | 'CATALOG_DELETED';
+  type: 'CONNECTED' | 'INGESTION_STARTED' | 'INGESTION_COMPLETED' | 'INGESTION_FAILED' | 'CATALOG_UPDATED' | 'CATALOG_DELETED';
   timestamp: string;
+  trackingId?: string;
   product?: IngestionProduct;
   productId?: string;
   latencyMs?: number;
   message?: string;
+  error?: string;
   metadata?: Record<string, any>;
 }
 
 export interface UseIngestionStreamOptions {
+  onIngestionStarted?: (event: StreamEvent) => void;
   onIngestionCompleted?: (event: StreamEvent) => void;
+  onIngestionFailed?: (event: StreamEvent) => void;
   onCatalogUpdated?: (event: StreamEvent) => void;
   onCatalogDeleted?: (event: StreamEvent) => void;
   enabled?: boolean;
@@ -66,11 +70,31 @@ export function useIngestionStream(options: UseIngestionStreamOptions = {}) {
       }
     });
 
+    es.addEventListener('INGESTION_STARTED', (e: MessageEvent) => {
+      try {
+        const data: StreamEvent = JSON.parse(e.data);
+        setLastEvent(data);
+        optionsRef.current.onIngestionStarted?.(data);
+      } catch (err) {
+        console.error('[SSE Parse Error]:', err);
+      }
+    });
+
     es.addEventListener('INGESTION_COMPLETED', (e: MessageEvent) => {
       try {
         const data: StreamEvent = JSON.parse(e.data);
         setLastEvent(data);
         optionsRef.current.onIngestionCompleted?.(data);
+      } catch (err) {
+        console.error('[SSE Parse Error]:', err);
+      }
+    });
+
+    es.addEventListener('INGESTION_FAILED', (e: MessageEvent) => {
+      try {
+        const data: StreamEvent = JSON.parse(e.data);
+        setLastEvent(data);
+        optionsRef.current.onIngestionFailed?.(data);
       } catch (err) {
         console.error('[SSE Parse Error]:', err);
       }
