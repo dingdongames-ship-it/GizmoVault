@@ -23,7 +23,8 @@ import {
   ExternalLink,
   MessageSquareQuote,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 import { Card } from '../../ui/Card';
 import { Button } from '../../ui/Button';
@@ -31,6 +32,7 @@ import { Input } from '../../ui/Input';
 import { Modal } from '../../ui/Modal';
 import { useToast } from '../../ui/Toast';
 import { useIngestionStream, IngestionProduct, StreamEvent } from '../../../hooks/useIngestionStream';
+import { insertSupabaseProduct } from '../../../services/supabase';
 
 const CATEGORIES = [
   'All',
@@ -70,6 +72,51 @@ export const MerchantDashboardView: React.FC = () => {
 
   // Raw WhatsApp Source Viewer Modal
   const [sourceViewerItem, setSourceViewerItem] = useState<IngestionProduct | null>(null);
+
+  // Add Product to Supabase Modal State
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    title: '',
+    description: '',
+    price: 3499,
+    category: 'Electronic Gadgets',
+    media_url: 'https://pub-016d509dc82548c484331db82640e77b.r2.dev/products/sample.webp',
+    media_type: 'image' as 'image' | 'video',
+    status: 'ACTIVE' as 'ACTIVE' | 'DRAFT'
+  });
+
+  const handleCreateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProduct.title.trim() || !newProduct.media_url.trim()) {
+      showToast('Please specify a title and media URL', 'error');
+      return;
+    }
+    setIsAdding(true);
+    try {
+      const { data, error } = await insertSupabaseProduct(newProduct);
+      if (error) {
+        showToast(`Supabase insert error: ${error.message}`, 'error');
+      } else {
+        showToast('Product published to Supabase & Realtime broadcast dispatched!', 'success');
+        setIsAddModalOpen(false);
+        setNewProduct({
+          title: '',
+          description: '',
+          price: 3499,
+          category: 'Electronic Gadgets',
+          media_url: 'https://pub-016d509dc82548c484331db82640e77b.r2.dev/products/sample.webp',
+          media_type: 'image',
+          status: 'ACTIVE'
+        });
+        fetchProducts();
+      }
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to insert product into Supabase', 'error');
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   // Ingestion Feed (Recent items & latency metrics)
   const [recentFeed, setRecentFeed] = useState<Array<{
@@ -337,8 +384,16 @@ export const MerchantDashboardView: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Button 
+            size="sm" 
+            variant="primary" 
+            icon={<Plus size={14} />} 
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Add Product (Supabase)
+          </Button>
           {sseStatus === 'disconnected' && (
-            <Button size="sm" variant="outline" icon={<RefreshCw size={14} />} onClick={reconnect}>
+            <Button size="sm" variant="secondary" icon={<RefreshCw size={14} />} onClick={reconnect}>
               Reconnect Stream
             </Button>
           )}
@@ -556,7 +611,7 @@ export const MerchantDashboardView: React.FC = () => {
                   placeholder="Search catalog by title, SKU, or category..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  leftIcon={<Search size={16} />}
+                  icon={<Search size={16} />}
                 />
               </div>
 
@@ -628,7 +683,7 @@ export const MerchantDashboardView: React.FC = () => {
                   </Button>
                   <Button 
                     size="sm" 
-                    variant="outline" 
+                    variant="secondary" 
                     icon={<Archive size={14} />} 
                     disabled={bulkProcessing}
                     onClick={() => handleBulkAction('archive')}
@@ -826,7 +881,6 @@ export const MerchantDashboardView: React.FC = () => {
           isOpen={true} 
           onClose={() => setActiveItem(null)} 
           title={`Review & Quick Edit: ${activeItem.title}`}
-          maxWidth="720px"
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Extracted Media Preview */}
@@ -958,7 +1012,7 @@ export const MerchantDashboardView: React.FC = () => {
 
               <div style={{ display: 'flex', gap: 10 }}>
                 <Button 
-                  variant="outline" 
+                  variant="secondary" 
                   onClick={() => handleSaveProduct('DRAFT')}
                   disabled={isSaving}
                 >
@@ -984,7 +1038,6 @@ export const MerchantDashboardView: React.FC = () => {
           isOpen={true} 
           onClose={() => setSourceViewerItem(null)} 
           title={`Raw WhatsApp Metadata: ${sourceViewerItem.title}`}
-          maxWidth="560px"
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', margin: 0 }}>
@@ -1010,6 +1063,115 @@ export const MerchantDashboardView: React.FC = () => {
               </Button>
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* MODAL 3: Direct Add Product to Supabase */}
+      {isAddModalOpen && (
+        <Modal
+          isOpen={true}
+          onClose={() => setIsAddModalOpen(false)}
+          title="Add Product Directly to Supabase Cloud"
+        >
+          <form onSubmit={handleCreateProduct} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ 
+              padding: '8px 12px', 
+              borderRadius: 'var(--radius-sm)', 
+              background: 'rgba(0, 229, 255, 0.08)', 
+              border: '1px solid rgba(0, 229, 255, 0.2)',
+              fontSize: '0.8125rem',
+              color: 'var(--accent-cyan)'
+            }}>
+              ✨ When saved, this item is written to your Supabase <code>products</code> table and instantly broadcasts in real-time across all mobile apps worldwide via Cloudflare CDN.
+            </div>
+
+            <Input
+              label="Product Title"
+              placeholder="e.g. ChronoMaster Black Series 44mm"
+              value={newProduct.title}
+              onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
+              required
+            />
+
+            <div className="form-group">
+              <label className="form-label">Description</label>
+              <textarea
+                className="form-input"
+                rows={3}
+                placeholder="Detailed luxury specifications, condition, box, papers..."
+                value={newProduct.description}
+                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <Input
+                label="Price (INR ₹)"
+                type="number"
+                placeholder="4999"
+                value={String(newProduct.price)}
+                onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
+                required
+              />
+
+              <div className="form-group">
+                <label className="form-label">Category</label>
+                <select
+                  className="form-input"
+                  value={newProduct.category}
+                  onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                >
+                  <option value="Electronic Gadgets">Electronic Gadgets</option>
+                  <option value="Imported Watches">Imported Watches</option>
+                  <option value="Audio Products">Audio Products</option>
+                  <option value="Mobile Accessories">Mobile Accessories</option>
+                </select>
+              </div>
+            </div>
+
+            <Input
+              label="Media URL (Cloudflare R2 Public CDN / Web URL)"
+              placeholder="https://pub-016d509dc82548c484331db82640e77b.r2.dev/products/watch.webp"
+              value={newProduct.media_url}
+              onChange={(e) => setNewProduct({ ...newProduct, media_url: e.target.value })}
+              required
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="form-group">
+                <label className="form-label">Media Type</label>
+                <select
+                  className="form-input"
+                  value={newProduct.media_type}
+                  onChange={(e) => setNewProduct({ ...newProduct, media_type: e.target.value as 'image' | 'video' })}
+                >
+                  <option value="image">Image (JPEG/WebP/PNG)</option>
+                  <option value="video">Video (MP4/WebM)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Status</label>
+                <select
+                  className="form-input"
+                  value={newProduct.status}
+                  onChange={(e) => setNewProduct({ ...newProduct, status: e.target.value as 'ACTIVE' | 'DRAFT' })}
+                >
+                  <option value="ACTIVE">ACTIVE (Published Live)</option>
+                  <option value="DRAFT">DRAFT (Hidden)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
+              <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" isLoading={isAdding} icon={<Plus size={16} />}>
+                Publish to Supabase Live
+              </Button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

@@ -16,6 +16,11 @@ import {
 } from '../data/mockData';
 import { useToast } from '../components/ui/Toast';
 import { fetchPublishedCatalog } from '../services/api';
+import { 
+  fetchSupabaseProducts, 
+  mapSupabaseRowToProduct, 
+  subscribeToProductsRealtime 
+} from '../services/supabase';
 
 interface AppContextType {
   currentView: ViewType;
@@ -91,12 +96,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const refreshCatalog = async () => {
     setCatalogLoading(true);
     try {
+      // 1. Fetch published products from API/local cache
       const items = await fetchPublishedCatalog();
-      setCatalog(items);
-      if (items.length > 0) {
-        setProducts(items);
+
+      // 2. Fetch live products directly from Supabase 'products' table
+      const supabaseRows = await fetchSupabaseProducts();
+      const supabaseProducts = supabaseRows.map(mapSupabaseRowToProduct);
+
+      // 3. Merge products (Supabase live products take precedence, deduped by ID)
+      const mergedMap = new Map<string, Product>();
+      supabaseProducts.forEach((p) => mergedMap.set(p.id, p as Product));
+      items.forEach((p) => {
+        if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+      });
+
+      const combined = Array.from(mergedMap.values());
+      const finalItems = combined.length > 0 ? combined : items;
+
+      setCatalog(finalItems);
+      if (finalItems.length > 0) {
+        setProducts(finalItems);
         if (!selectedProduct) {
-          setSelectedProduct(items[0]);
+          setSelectedProduct(finalItems[0]);
         }
       }
       setCatalogError(null);
@@ -109,6 +130,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     refreshCatalog();
+
+    // Realtime Sync: Subscribes to Supabase 'products-feed' channel
+    const unsubscribe = subscribeToProductsRealtime(() => {
+      refreshCatalog();
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const navigateTo = (view: ViewType) => {

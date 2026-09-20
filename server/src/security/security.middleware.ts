@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { verifySupabaseToken } from './supabase.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gizmovault_super_secret_dev_key_2026';
 
@@ -43,7 +44,7 @@ export function createRateLimiter(windowMs: number = 60 * 1000, maxRequests: num
 }
 
 /**
- * Authentication verification middleware
+ * Authentication verification middleware supporting both internal JWT and Supabase Auth tokens
  */
 export function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   const authHeader = req.headers['authorization'];
@@ -54,6 +55,7 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
     return;
   }
 
+  // 1. Fast path: Check internal JWT (preserves backward compatibility and local microservice tokens)
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     req.user = {
@@ -62,9 +64,28 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
       phone: decoded.phone,
     };
     next();
-  } catch (err: any) {
-    res.status(403).json({ error: 'Forbidden: Invalid or expired token' });
+    return;
+  } catch {
+    // If not a local JWT, attempt Supabase Auth verification
   }
+
+  // 2. Supabase Auth token verification
+  verifySupabaseToken(token)
+    .then((supabaseUser) => {
+      if (supabaseUser) {
+        req.user = {
+          id: supabaseUser.id,
+          role: supabaseUser.role,
+          phone: supabaseUser.phone,
+        };
+        next();
+      } else {
+        res.status(403).json({ error: 'Forbidden: Invalid or expired token' });
+      }
+    })
+    .catch(() => {
+      res.status(403).json({ error: 'Forbidden: Invalid or expired token' });
+    });
 }
 
 /**

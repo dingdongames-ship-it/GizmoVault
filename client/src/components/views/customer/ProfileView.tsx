@@ -9,54 +9,102 @@ import {
   HelpCircle, 
   ChevronRight, 
   LogOut, 
-  ExternalLink 
+  LogIn,
+  ShieldCheck
 } from 'lucide-react';
 import { Card } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Modal } from '../../ui/Modal';
+import { useToast } from '../../ui/Toast';
 import { useApp } from '../../../context/AppContext';
+import { useAuth } from '../../../context/AuthContext';
+import { AuthModal } from './AuthModal';
 
 export const ProfileView: React.FC = () => {
   const { 
     addresses, 
     orders, 
     wishlist, 
-    products, 
     navigateTo, 
-    openProductDetails, 
     deleteAccount 
   } = useApp();
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { authUser, isAuthenticated, logout, isConfigured } = useAuth();
+  const { showToast } = useToast();
 
-  const wishlistedProducts = products.filter(p => wishlist.includes(p.id));
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const getInitials = (name?: string, email?: string) => {
+    if (name) {
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    if (email) return email.substring(0, 2).toUpperCase();
+    return 'GV';
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    showToast('Signed out of GizmoVault session', 'info');
+  };
+
+  const displayName = authUser?.fullName || (isAuthenticated ? 'Vault Member' : 'Guest Visitor');
+  const displayContact = authUser?.email || authUser?.phone || (isAuthenticated ? 'Authenticated via Supabase' : 'Sign in to sync your orders and addresses');
+  const initials = getInitials(authUser?.fullName, authUser?.email);
 
   return (
     <div style={{ paddingBottom: 48 }}>
+      {/* Auth Modal for signing in */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+
       {/* Profile Header */}
       <Card style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{
-            width: 60,
-            height: 60,
-            borderRadius: 'var(--radius-full)',
-            background: 'linear-gradient(135deg, #00e5ff 0%, #3b82f6 100%)',
-            color: '#041017',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 800,
-            fontSize: '1.375rem',
-            boxShadow: 'var(--cyan-glow)'
-          }}>
-            AS
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              width: 60,
+              height: 60,
+              borderRadius: 'var(--radius-full)',
+              background: isAuthenticated 
+                ? 'linear-gradient(135deg, #00e5ff 0%, #3b82f6 100%)' 
+                : 'linear-gradient(135deg, #475569 0%, #334155 100%)',
+              color: isAuthenticated ? '#041017' : '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 800,
+              fontSize: '1.375rem',
+              boxShadow: isAuthenticated ? 'var(--cyan-glow)' : 'none'
+            }}>
+              {initials}
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: 2 }}>{displayName}</h2>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{displayContact}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                <span className={`badge ${isAuthenticated ? 'badge-success' : 'badge-neutral'}`} style={{ fontSize: '0.6875rem' }}>
+                  {isAuthenticated ? 'Verified Vault Member' : 'Guest Mode'}
+                </span>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <ShieldCheck size={12} color="var(--accent-cyan)" />
+                  {isConfigured ? 'Supabase Connected' : 'Supabase Auth Ready'}
+                </span>
+              </div>
+            </div>
           </div>
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: '1.25rem', marginBottom: 2 }}>Aarav Sharma</h2>
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>aarav@example.com • +91 98765 43210</div>
-            <span className="badge badge-success" style={{ marginTop: 6, fontSize: '0.6875rem' }}>
-              Verified Vault Member
-            </span>
+
+          <div>
+            {isAuthenticated ? (
+              <Button variant="ghost" size="sm" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <LogOut size={16} /> Sign Out
+              </Button>
+            ) : (
+              <Button variant="primary" size="sm" onClick={() => setIsAuthModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <LogIn size={16} /> Sign In / Register
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -192,8 +240,9 @@ export const ProfileView: React.FC = () => {
           <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
           <Button 
             variant="danger" 
-            onClick={() => { 
+            onClick={async () => { 
               setIsDeleteModalOpen(false); 
+              await logout();
               deleteAccount(); 
             }}
           >

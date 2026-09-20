@@ -1,5 +1,25 @@
 import { Product } from '../types';
 import { INITIAL_PRODUCTS } from '../data/mockData';
+import { getSession } from './supabase';
+
+/**
+ * Returns authorization headers populated with Supabase access token if session is active
+ */
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  try {
+    const session = await getSession();
+    if (session && session.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  } catch {
+    // Ignore error if in non-browser or test context
+  }
+  return headers;
+}
 
 export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 

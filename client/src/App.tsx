@@ -16,6 +16,7 @@ import { AdminPortalView } from './components/views/admin/AdminPortalView';
 import { SplashScreen } from './components/views/customer/SplashScreen';
 import { AuthModal } from './components/views/customer/AuthModal';
 import { AppProvider, useApp } from './context/AppContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const MainAppContent: React.FC = () => {
   const { 
@@ -25,6 +26,7 @@ const MainAppContent: React.FC = () => {
     wishlist 
   } = useApp();
 
+  const { isAuthenticated } = useAuth();
   const [showSplash, setShowSplash] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
@@ -55,7 +57,13 @@ const MainAppContent: React.FC = () => {
           }}
           onOpenCart={() => navigateTo('cart')}
           onOpenSearch={() => navigateTo('search')}
-          onOpenProfile={() => setIsAuthOpen(true)}
+          onOpenProfile={() => {
+            if (isAuthenticated) {
+              navigateTo('profile');
+            } else {
+              setIsAuthOpen(true);
+            }
+          }}
         />
       )}
 
@@ -109,9 +117,11 @@ const MainAppContent: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <AppProvider>
-      <MainAppContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <MainAppContent />
+      </AppProvider>
+    </AuthProvider>
   );
 };
 
