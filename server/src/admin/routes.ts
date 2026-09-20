@@ -6,6 +6,7 @@ import { AdminApprovalService, WorkflowStatus } from './approval.service.js';
 import { CatalogProductRepository } from '../models/catalog.model.js';
 import { CatalogClassifierService } from './classifier.service.js';
 import { ingestionEventBus } from './ingestion-stream.js';
+import { r2Storage } from '../media/r2.storage.js';
 
 export function createAdminRoutes(
   approvalService?: AdminApprovalService,
@@ -252,10 +253,22 @@ export function createAdminRoutes(
 
       if (uploadedFileObj) {
         const savedFilename = path.basename(uploadedFileObj.filepath);
-        mediaUrl = `/uploads/catalog/${savedFilename}`;
         originalFilename = uploadedFileObj.originalFilename || savedFilename;
         const mime = uploadedFileObj.mimetype || '';
         mediaType = mime.startsWith('video/') || originalFilename.endsWith('.mp4') ? 'VIDEO' : 'IMAGE';
+
+        // Upload to Cloudflare R2 if configured and driver is r2
+        if (process.env.MEDIA_STORAGE_DRIVER === 'r2' && r2Storage.isConfigured()) {
+          try {
+            const r2Key = `catalog/${savedFilename}`;
+            mediaUrl = await r2Storage.uploadFile(uploadedFileObj.filepath, r2Key, mime || 'application/octet-stream');
+          } catch (r2Err) {
+            console.warn('[R2 Upload Warning]: Failed to upload to Cloudflare R2, falling back to local URL', r2Err);
+            mediaUrl = `/uploads/catalog/${savedFilename}`;
+          }
+        } else {
+          mediaUrl = `/uploads/catalog/${savedFilename}`;
+        }
       }
 
       // Automated Classification Step
