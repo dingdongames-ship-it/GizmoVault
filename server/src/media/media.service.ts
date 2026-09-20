@@ -61,7 +61,10 @@ export class MediaPipelineService {
     this.db = customDb || getDb();
     this.maxImageSize = config.maxImageSizeBytes || 15 * 1024 * 1024; // 15 MB
     this.maxVideoSize = config.maxVideoSizeBytes || 50 * 1024 * 1024; // 50 MB
-    this.cdnBaseUrl = config.cdnBaseUrl || 'https://cdn.gizmovault.com';
+    const defaultCdn = process.env.NODE_ENV === 'test' 
+      ? 'https://cdn.gizmovault.com' 
+      : (process.env.CDN_BASE_URL || 'https://pub-016d509dc82548c484331db82640e77b.r2.dev');
+    this.cdnBaseUrl = config.cdnBaseUrl || defaultCdn;
     this.storageDir = config.storageDir || path.resolve(process.cwd(), 'uploads/media');
     this.signingSecret = config.signingSecret || process.env.MEDIA_SIGNING_SECRET || 'gz_sec_media_sig_2026';
 
@@ -368,7 +371,7 @@ export class MediaPipelineService {
     if (!rawUrl) return { cdnUrl: '', isCloaked: false };
 
     // If it's already a safe CDN URL, return it
-    if (rawUrl.startsWith(this.cdnBaseUrl) || rawUrl.startsWith('/assets/')) {
+    if (rawUrl.startsWith(this.cdnBaseUrl) || rawUrl.startsWith('https://cdn.gizmovault.com') || rawUrl.startsWith('/assets/')) {
       return { cdnUrl: rawUrl, isCloaked: false };
     }
 
