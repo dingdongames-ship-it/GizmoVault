@@ -32,7 +32,18 @@ const PORT = process.env.PORT || 4000;
 // Security & Body parsing
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
+
+// Webhook endpoints require untransformed raw byte streams for HMAC signature verification
+app.use((req, res, next) => {
+  if (req.originalUrl?.includes('/webhook') || req.path?.includes('/webhook')) {
+    return next();
+  }
+  express.json({
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })(req, res, next);
+});
 app.use(correlationIdMiddleware);
 app.use(metricsMiddleware);
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
